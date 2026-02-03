@@ -1,0 +1,49 @@
+SERVICE AGREEMENT
+
+This Service Agreement is entered into on January 15, 2024, between:
+
+ABC Technologies Pvt. Ltd., a company incorporated under the Companies Act, 2013
+GST: 07AABCA1234M1Z5
+Address: 123 Tech Park, Bangalore, Karnataka - 560001
+("Client")
+
+AND
+
+XYZ Consulting Services, a partnership firm
+GST: 29AABCX1234N1Z6  
+Address: 456 Business Center, Mumbai, Maharashtra - 400001
+("Service Provider")
+
+SCOPE OF SERVICES:
+The Service Provider agrees to provide software development services including:
+- Web application development
+- Database design and implementation
+- Testing and deployment
+- 6 months maintenance support
+
+PAYMENT TERMS:
+- Total contract value: ₹5,00,000 (Five Lakh Rupees)
+- Payment schedule: 30% advance, 40% on milestone completion, 30% on delivery
+- Payment due within 30 days of invoice
+- Late payment penalty: 2% per month
+
+PROJECT TIMELINE:
+- Start date: February 1, 2024
+- Completion date: May 31, 2024
+- Key milestones: Design approval by March 15, Development completion by May 15
+
+TERMINATION:
+Either party may terminate this agreement with 30 days written notice. In case of breach, immediate termination is allowed.
+
+LIABILITY:
+Service Provider's liability is limited to the total contract value. Neither party shall be liable for indirect damages.
+
+INTELLECTUAL PROPERTY:
+All deliverables shall be owned by the Client upon full payment.
+
+GOVERNING LAW:
+This agreement shall be governed by Indian law. Disputes shall be resolved through arbitration in Bangalore.
+
+SIGNATURES:
+Client: _________________
+Service Provider: _________________
