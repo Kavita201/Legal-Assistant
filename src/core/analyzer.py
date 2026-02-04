@@ -46,8 +46,10 @@ class ContractAnalyzer:
     
     def _load_nlp(self):
         try:
+            import spacy
             return spacy.load("en_core_web_sm")
-        except:
+        except Exception as e:
+            print(f"spaCy loading failed: {e}")
             return None
     
     def analyze_contract(self, text: str) -> Dict:
@@ -91,17 +93,67 @@ class ContractAnalyzer:
     def _extract_advanced_entities(self, text: str) -> Dict:
         entities = {'parties': [], 'dates': [], 'amounts': [], 'jurisdictions': [], 'liabilities': []}
         
+        # Always use regex fallback for reliability in cloud environments
+        entities = self._extract_entities_regex(text)
+        
+        # Try spaCy as enhancement if available
         if self.nlp:
-            doc = self.nlp(text)
-            for ent in doc.ents:
-                if ent.label_ in ["PERSON", "ORG"]:
-                    entities['parties'].append(ent.text)
-                elif ent.label_ == "DATE":
-                    entities['dates'].append(ent.text)
-                elif ent.label_ == "MONEY":
-                    entities['amounts'].append(ent.text)
-                elif ent.label_ in ["GPE", "LOC"]:
-                    entities['jurisdictions'].append(ent.text)
+            try:
+                doc = self.nlp(text)
+                for ent in doc.ents:
+                    if ent.label_ in ["PERSON", "ORG"] and ent.text not in entities['parties']:
+                        entities['parties'].append(ent.text)
+                    elif ent.label_ == "DATE" and ent.text not in entities['dates']:
+                        entities['dates'].append(ent.text)
+                    elif ent.label_ == "MONEY" and ent.text not in entities['amounts']:
+                        entities['amounts'].append(ent.text)
+                    elif ent.label_ in ["GPE", "LOC"] and ent.text not in entities['jurisdictions']:
+                        entities['jurisdictions'].append(ent.text)
+            except Exception as e:
+                print(f"spaCy processing failed: {e}")
+        
+        return entities
+    
+    def _extract_entities_regex(self, text: str) -> Dict:
+        entities = {'parties': [], 'dates': [], 'amounts': [], 'jurisdictions': [], 'liabilities': []}
+        
+        # Parties
+        party_patterns = [
+            r'([A-Z][a-zA-Z\s&]+(?:Pvt\.?\s*Ltd\.?|Ltd\.?|Inc\.?|Corp\.?|LLC|LLP))',
+            r'([A-Z][a-zA-Z\s]+(?:Technologies|Consulting|Services|Solutions|Systems))',
+        ]
+        for pattern in party_patterns:
+            matches = re.findall(pattern, text)
+            entities['parties'].extend([m.strip() for m in matches if len(m.strip()) > 3])
+        
+        # Dates
+        date_patterns = [
+            r'\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4}\b',
+            r'\b\d{1,2}[/-]\d{1,2}[/-]\d{4}\b'
+        ]
+        for pattern in date_patterns:
+            entities['dates'].extend(re.findall(pattern, text))
+        
+        # Amounts
+        amount_patterns = [
+            r'₹[\d,]+',
+            r'\b\d+\s*lakh\s*rupees?\b'
+        ]
+        for pattern in amount_patterns:
+            entities['amounts'].extend(re.findall(pattern, text, re.IGNORECASE))
+        
+        # Jurisdictions
+        location_patterns = [
+            r'\b(?:Bangalore|Mumbai|Delhi|Chennai|Kolkata|Hyderabad|Pune|Ahmedabad|Karnataka|Maharashtra|Tamil Nadu|Gujarat)\b',
+            r'Indian\s+law'
+        ]
+        for pattern in location_patterns:
+            entities['jurisdictions'].extend(re.findall(pattern, text, re.IGNORECASE))
+        
+        # Clean up
+        for key in entities:
+            entities[key] = list(set([item.strip() for item in entities[key] if item.strip()]))
+            entities[key] = entities[key][:5]
         
         return entities
     
