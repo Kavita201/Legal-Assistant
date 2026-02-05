@@ -3,13 +3,12 @@ import nltk
 import json
 import re
 from typing import Dict, List
-from .simple_llm import SimpleLLM
 import streamlit as st
 
 class ContractAnalyzer:
     def __init__(self):
         self.nlp = self._load_nlp()
-        self.llm = SimpleLLM()
+        self.llm = None  # Disabled for deployment
         
         self.contract_patterns = {
             'employment': ['employment', 'salary', 'employee', 'job', 'position', 'work'],
@@ -293,24 +292,9 @@ class ContractAnalyzer:
         return 'Low'
     
     def _generate_llm_summary(self, text: str, contract_type: str) -> str:
-        try:
-            prompt = f"This {contract_type} contract summary:"
-            llm_output = self.llm.generate_text(prompt, max_length=80)
-            if llm_output and llm_output != "LLM not available":
-                return f"This {contract_type} contract {llm_output}"
-        except:
-            pass
         return self._generate_summary(text, contract_type)
     
     def _generate_llm_suggestions(self, risks: Dict, contract_type: str) -> str:
-        try:
-            risk_text = f"with {', '.join(risks.keys())}" if risks else "appears balanced"
-            prompt = f"Legal advice for {contract_type} {risk_text}:"
-            llm_output = self.llm.generate_text(prompt, max_length=100)
-            if llm_output and llm_output != "LLM not available":
-                return llm_output + ". Always consult legal counsel."
-        except:
-            pass
         return self._generate_suggestions(risks, contract_type)
     
     def _generate_summary(self, text: str, contract_type: str) -> str:
