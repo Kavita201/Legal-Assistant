@@ -1,6 +1,6 @@
 import streamlit as st
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
-import torch
+# from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+# import torch
 
 class SimpleLLM:
     def __init__(self):
