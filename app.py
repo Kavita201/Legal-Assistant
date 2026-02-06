@@ -267,6 +267,19 @@ def show_templates():
             st.markdown(f"**{section.title()}:** {content}")
 
 def generate_comprehensive_report(results):
+    # Build clause-level risk assessment
+    clause_risks = chr(10).join(f"- **{k.replace('_', ' ').title()}:** {v} Risk" for k, v in results.get('clause_risk_scores', {}).items())
+    
+    # Build specific risk clauses
+    specific_risks = chr(10).join(
+        f"### {k.replace('_', ' ').title()}\n- Risk Level: {v['level']}\n- Instances: {len(v['instances'])}"
+        for k, v in results.get('risks', {}).items()
+        if isinstance(v, dict)
+    )
+    
+    # Build ambiguity analysis
+    ambiguities = chr(10).join(f"- **{amb['term']}:** {amb['issue']}" for amb in results.get('ambiguities', []))
+    
     return f"""# Advanced Contract Analysis Report
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
@@ -290,17 +303,13 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 ### Prohibitions Identified: {len(results.get('obligations', {}).get('prohibitions', []))}
 
 ## Clause-Level Risk Assessment
-{chr(10).join(f"- **{k.replace('_', ' ').title()}:** {v} Risk" for k, v in results.get('clause_risk_scores', {}).items())}
+{clause_risks}
 
 ## Specific Risk Clauses Detected
-{chr(10).join(
-    f"### {k.replace('_', ' ').title()}\n- Risk Level: {v['level']}\n- Instances: {len(v['instances'])}"
-    for k, v in results.get('risks', {}).items()
-    if isinstance(v, dict)
-)}
+{specific_risks}
 
 ## Ambiguity Analysis
-{chr(10).join(f"- **{amb['term']}:** {amb['issue']}" for amb in results.get('ambiguities', []))}
+{ambiguities}
 
 ## Template Compliance
 - **Missing Standard Clauses:** {', '.join(results.get('template_similarity', {}).get('missing_clauses', []))}
