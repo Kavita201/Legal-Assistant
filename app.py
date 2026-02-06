@@ -293,7 +293,11 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 {chr(10).join(f"- **{k.replace('_', ' ').title()}:** {v} Risk" for k, v in results.get('clause_risk_scores', {}).items())}
 
 ## Specific Risk Clauses Detected
-{chr(10).join(f"### {k.replace('_', ' ').title()}\\n- Risk Level: {v['level']}\\n- Instances: {len(v['instances'])}" for k, v in results.get('risks', {}).items() if isinstance(v, dict))}
+{chr(10).join(
+    f"### {k.replace('_', ' ').title()}\n- Risk Level: {v['level']}\n- Instances: {len(v['instances'])}"
+    for k, v in results.get('risks', {}).items()
+    if isinstance(v, dict)
+)}
 
 ## Ambiguity Analysis
 {chr(10).join(f"- **{amb['term']}:** {amb['issue']}" for amb in results.get('ambiguities', []))}
